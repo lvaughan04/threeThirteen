@@ -1,11 +1,29 @@
 package models
 
+import "fmt"
+
 type Player struct {
-	PlayerID   string `json:"player_id"`
+	PlayerID string `json:"player_id"`
 	Username string `json:"username"`
 	Score    int    `json:"score"`
 	Hand     []Card `json:"hand"`
 	IsTurn   bool   `json:"is_turn"`
 	IsDealer bool   `json:"is_dealer"`
 	IsActive bool   `json:"is_active"`
+}
+
+func (p *Player) AddCardToHand(card Card) {
+	p.Hand = append(p.Hand, card)
+}
+
+// This function will take a card to be removed and will be
+// sent from the client side to a controller method with the card that needs to be removed
+func (p *Player) RemoveCardFromHand(target Card) error {
+	for i, card := range p.Hand {
+		if card == target {
+			p.Hand = append(p.Hand[:i], p.Hand[i+1:]...)
+			return nil // success, no error
+		}
+	}
+	return fmt.Errorf("card not found in hand: %+v", target)
 }
