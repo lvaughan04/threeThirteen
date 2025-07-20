@@ -4,15 +4,16 @@ import (
 	"log"
 	"os"
 
+	"context"
+	"time"
+
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"context"
-	"time"
 )
 
 type Database struct {
-	Client    *mongo.Client
+	Client *mongo.Client
 }
 
 func NewDatabase() (*Database, error) {
@@ -42,8 +43,8 @@ func NewDatabase() (*Database, error) {
 }
 
 func (db *Database) Close() error {
-    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-    defer cancel()
-    
-    return db.Client.Disconnect(ctx)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	return db.Client.Disconnect(ctx)
 }
