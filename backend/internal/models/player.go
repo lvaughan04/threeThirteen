@@ -1,18 +1,18 @@
 package models
 
-import ("fmt"
-	"backend/internal/types"	
+import (
+	"backend/internal/types"
+	"fmt"
 )
 
-
 type Player struct {
-	PlayerID string `json:"player_id"`
-	Username string `json:"username"`
-	Score    int    `json:"score"`
+	PlayerID string       `json:"player_id"`
+	Username string       `json:"username"`
+	Score    int          `json:"score"`
 	Hand     []types.Card `json:"hand"`
-	IsTurn   bool   `json:"is_turn"`
-	IsDealer bool   `json:"is_dealer"`
-	IsActive bool   `json:"is_active"`
+	IsTurn   bool         `json:"is_turn"`
+	IsDealer bool         `json:"is_dealer"`
+	IsActive bool         `json:"is_active"`
 }
 
 func (p *Player) AddCardToHand(card types.Card) {

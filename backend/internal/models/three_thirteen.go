@@ -81,8 +81,6 @@ func (g *ThreeThirteenGame) StartRound() error {
 		utils.ShuffleDeck(g.Deck)
 	}
 
-	
-
 	// Place first card in discard pile
 	if len(g.Deck) > 0 {
 		g.PushToDiscardPile(g.Deck[0])
@@ -302,6 +300,5 @@ func (g *ThreeThirteenGame) GetWinner() *Player {
 
 	return &g.Players[winnerIndex]
 }
-
 
 // GO THROUGH THIS CODE AND MAKE SURE IT IS ALL CORRECT TO THE EXPECTATIONS OF THE GAME
