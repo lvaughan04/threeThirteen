@@ -6,13 +6,13 @@ import (
 )
 
 type BaseGame struct {
-	GameID      string       `json:"game_id"`
-	Players     []Player     `json:"players"`
-	Deck        []types.Card `json:"deck"`
-	DiscardPile []types.Card `json:"discard_pile"`
-	CurrentTurn int          `json:"current_turn"`
-	GameState   string       `json:"game_state"`
-	Round       int          `json:"round"`
+	GameID      string             `json:"game_id"`
+	Players     map[string]*Player `json:"players"`
+	Deck        []types.Card       `json:"deck"`
+	DiscardPile []types.Card       `json:"discard_pile"`
+	CurrentTurn int                `json:"current_turn"`
+	GameState   string             `json:"game_state"`
+	Round       int                `json:"round"`
 }
 
 // Common methods that work the same for all card games

@@ -7,13 +7,13 @@ import (
 )
 
 type Game struct {
-	GameID      string       `json:"game_id"`
-	Players     []Player     `json:"players"`
-	Deck        []types.Card `json:"deck"`
-	DiscardPile []types.Card `json:"discard_pile"`
-	CurrentTurn int          `json:"current_turn"` // Index of player whose turn it is
-	GameState   string       `json:"game_state"`
-	Round       int          `json:"round"`
+	GameID      string             `json:"game_id"`
+	Players     map[string]*Player `json:"players"`
+	Deck        []types.Card       `json:"deck"`
+	DiscardPile []types.Card       `json:"discard_pile"`
+	CurrentTurn int                `json:"current_turn"` // Index of player whose turn it is
+	GameState   string             `json:"game_state"`
+	Round       int                `json:"round"`
 }
 
 func (g *Game) PushToDiscardPile(card types.Card) {
@@ -115,12 +115,12 @@ func (g *Game) DiscardFromHand(player *Player, card types.Card) error {
 /*
  * Given An array of players, and sets all of the game information to its starting values
  */
-func (g *Game) InitilizeGame(players []Player) {
-	g.Players = players
-	deck := utils.CreateDeck()
-	utils.ShuffleDeck(deck)
-	g.DiscardPile = []types.Card{}
-	g.CurrentTurn = 0
-	g.Round = 3
-	g.GameState = "initialized"
-}
+// func (g *Game) InitilizeGame(players []Player) {
+// 	g.Players = players
+// 	deck := utils.CreateDeck()
+// 	utils.ShuffleDeck(deck)
+// 	g.DiscardPile = []types.Card{}
+// 	g.CurrentTurn = 0
+// 	g.Round = 3
+// 	g.GameState = "initialized"
+// }
