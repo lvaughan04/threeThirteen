@@ -15,28 +15,28 @@ type ThreeThirteenHandler struct {
 }
 
 func (h *ThreeThirteenHandler) handlePlayerDrewCard(event ui.PlayerDrewCardIntent) {
-	game, ok := h.activeGames[event.GetGameID()];
+	gameState, ok := h.activeGames[event.GetGameID()];
 	if !ok {
 		return
 	}
-	player , ok := game.Players[event.PlayerID]
+	player , ok := gameState.Players[event.PlayerID]
 	if !ok {
 		return
 	}
 	var drawnCard types.Card
 	if event.Source == "deck" {
-		game.DrawFromDeck(player)
+		gameState.DrawFromDeck(player)
 	} else if event.Source == "discard" {
-		game.DrawFromDiscard(player)
+		gameState.DrawFromDiscard(player)
 	}
 
-	h.eventBus.Publish(game_events.GameEvent{
-		Type:   ui.TT_CARD_DRAWN,
+	h.eventBus.Publish(game.GameEvent{
+		Type:  game.TT_CARD_DRAWN,
 		GameID: event.GameID,
-		Data: ui.TTCardDrawnData{
+		Data: game.TTCardDrawnData{
 			PlayerID: event.PlayerID,
 			Source:   event.Source,
-			Card:     
+			Card:     drawnCard,
 		},
 	})
 		

@@ -11,10 +11,9 @@ import (
 type ThreeThirteenGame struct {
 	*BaseGame
 	MaxRounds   int         `json:"max_rounds"`   // (3 to 13)
-	PointValues map[int]int `json:"point_values"` // Card point values based on card.Value
+	PointValues map[int]int `json:"point_values"`
 }
 
-// NewThreeThirteenGame creates a new Three Thirteen game instance
 func NewThreeThirteenGame(gameID string) *ThreeThirteenGame {
 	game := &ThreeThirteenGame{
 		BaseGame: &BaseGame{
@@ -24,13 +23,11 @@ func NewThreeThirteenGame(gameID string) *ThreeThirteenGame {
 		MaxRounds: 11,
 	}
 
-	// Initialize point values for scoring
 	game.initPointValues()
 
 	return game
 }
 
-// Initialize card point values for Three Thirteen scoring
 func (g *ThreeThirteenGame) initPointValues() {
 	g.PointValues = make(map[int]int)
 
@@ -41,7 +38,7 @@ func (g *ThreeThirteenGame) initPointValues() {
 }
 
 // InitializeGame sets up the game with players and initial state
-func (g *ThreeThirteenGame) InitializeGame(players []Player) error {
+func (g *ThreeThirteenGame) InitializeGame(players []*Player) error {
 	if len(players) < 2 || len(players) > 6 {
 		return fmt.Errorf("three thirteen requires 2-6 players, got %d", len(players))
 	}
@@ -59,29 +56,24 @@ func (g *ThreeThirteenGame) InitializeGame(players []Player) error {
 	return nil
 }
 
-// GetWildCardValue returns the current wild card value based on the round
 func (g *ThreeThirteenGame) GetWildCardValue() int {
-	return g.Round // The wild card value is the current round number
+	return g.Round
 }
 
-// StartRound begins a new round, dealing cards
 func (g *ThreeThirteenGame) StartRound() error {
 	if g.GameState != "initialized" && g.GameState != "round_complete" {
 		return fmt.Errorf("game must be initialized or round complete to start a new round")
 	}
 
-	// Reset hands
 	for i := range g.Players {
 		g.Players[i].Hand = []types.Card{}
 	}
 
-	// If needed, create a new deck
 	if len(g.Deck) < len(g.Players)*g.Round {
 		g.Deck = utils.CreateDeck()
 		utils.ShuffleDeck(g.Deck)
 	}
 
-	// Place first card in discard pile
 	if len(g.Deck) > 0 {
 		g.PushToDiscardPile(g.Deck[0])
 		g.Deck = g.Deck[1:]
@@ -93,62 +85,36 @@ func (g *ThreeThirteenGame) StartRound() error {
 	return nil
 }
 
-// Override DrawFromDeck to add ThreeThirteen-specific rules
 func (g *ThreeThirteenGame) DrawFromDeck(player *Player) error {
-	// Check if it's player's turn
-	if g.Players[g.CurrentTurn].PlayerID != player.PlayerID {
-		return fmt.Errorf("not player's turn")
-	}
-
-	// ThreeThirteen-specific rule - can only draw at the beginning of turn
 	if len(player.Hand) >= g.Round+1 {
 		return fmt.Errorf("player cannot draw more cards this round")
 	}
 
-	// Call the base implementation
 	return g.BaseGame.DrawFromDeck(player)
 }
 
-// Override DrawFromDiscard to add ThreeThirteen-specific rules
 func (g *ThreeThirteenGame) DrawFromDiscard(player *Player) error {
-	// Check if it's player's turn
-	if g.Players[g.CurrentTurn].PlayerID != player.PlayerID {
-		return fmt.Errorf("not player's turn")
-	}
-
-	// ThreeThirteen-specific rule - can only draw at the beginning of turn
 	if len(player.Hand) >= g.Round+1 {
 		return fmt.Errorf("player cannot draw more cards this round")
 	}
 
-	// Call the base implementation
 	return g.BaseGame.DrawFromDiscard(player)
 }
 
-// DiscardAndEndTurn discards a card and advances to the next player
 func (g *ThreeThirteenGame) DiscardAndEndTurn(player *Player, card types.Card) error {
-	// Verify it's player's turn
-	if g.Players[g.CurrentTurn].PlayerID != player.PlayerID {
-		return fmt.Errorf("not player's turn")
-	}
-
-	// Must have drawn a card first
 	if len(player.Hand) != g.Round+1 {
 		return fmt.Errorf("must draw a card before discarding")
 	}
 
-	// Discard the card
 	err := g.BaseGame.DiscardFromHand(player, card)
 	if err != nil {
 		return err
 	}
 
-	// Move to next player
 	g.CurrentTurn = (g.CurrentTurn + 1) % len(g.Players)
 	return nil
 }
 
-// IsSet checks if a group of cards forms a valid set (same rank/value)
 func (g *ThreeThirteenGame) IsSet(cards []types.Card) bool {
 	if len(cards) < 3 {
 		return false
@@ -173,7 +139,6 @@ func (g *ThreeThirteenGame) IsSet(cards []types.Card) bool {
 	return true
 }
 
-// IsRun checks if a group of cards forms a valid run (sequential, same suit)
 func (g *ThreeThirteenGame) IsRun(cards []types.Card) bool {
 	if len(cards) < 3 {
 		return false
@@ -223,7 +188,6 @@ func (g *ThreeThirteenGame) IsRun(cards []types.Card) bool {
 	return gaps <= wildCards
 }
 
-// CalculateScore calculates a player's score for unmatched cards
 func (g *ThreeThirteenGame) CalculateScore(player *Player) int {
 	score := 0
 	for _, card := range player.Hand {
@@ -232,7 +196,6 @@ func (g *ThreeThirteenGame) CalculateScore(player *Player) int {
 	return score
 }
 
-// EndRound ends the current round, calculates scores, and prepares for next round
 func (g *ThreeThirteenGame) EndRound() {
 	// Calculate scores for each player
 	for i := range g.Players {
@@ -250,29 +213,22 @@ func (g *ThreeThirteenGame) EndRound() {
 	}
 }
 
-// DeclareGoingOut allows a player to go out if all their cards form valid sets or runs
 func (g *ThreeThirteenGame) DeclareGoingOut(player *Player, meldGroups [][]types.Card) error {
 	// Check if player is in the game
 	if !g.IsPlayerInGame(player) {
 		return fmt.Errorf("player not in game")
 	}
 
-	// Verify it's player's turn
 	if g.Players[g.CurrentTurn].PlayerID != player.PlayerID {
 		return fmt.Errorf("not player's turn")
 	}
 
-	// Check that all card groups are valid
 	for _, group := range meldGroups {
 		if !g.IsSet(group) && !g.IsRun(group) {
 			return fmt.Errorf("invalid card group")
 		}
 	}
 
-	// Verify all cards in player's hand are included in melds
-	// This requires more complex validation that we can add later
-
-	// End the round
 	g.EndRound()
 	return nil
 }
@@ -300,5 +256,3 @@ func (g *ThreeThirteenGame) GetWinner() *Player {
 
 	return &g.Players[winnerIndex]
 }
-
-// GO THROUGH THIS CODE AND MAKE SURE IT IS ALL CORRECT TO THE EXPECTATIONS OF THE GAME

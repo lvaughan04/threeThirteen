@@ -10,3 +10,11 @@ type GameEvent struct {
 	Data      interface{} `json:"data"`
 	Timestamp time.Time   `json:"timestamp"`
 }
+
+func (g GameEvent) GetType() string {
+	return g.Type
+}
+
+func (g GameEvent) GetGameID() string {
+	return g.GameID
+}

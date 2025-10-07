@@ -56,7 +56,6 @@ func (g *BaseGame) DrawFromDeck(player *Player) error {
 		if len(g.DiscardPile) <= 1 {
 			return fmt.Errorf("no cards left in deck and not enough cards to reshuffle")
 		}
-		// Basic reshuffling logic - specific games can override this
 		topCard := g.DiscardPile[0]
 		g.Deck = append([]types.Card{}, g.DiscardPile[1:]...)
 		g.DiscardPile = []types.Card{topCard}
