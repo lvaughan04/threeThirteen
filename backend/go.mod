@@ -4,6 +4,8 @@ go 1.22.3
 
 require go.mongodb.org/mongo-driver v1.17.4
 
+require github.com/gorilla/websocket v1.5.3 // indirect
+
 require (
 	github.com/golang/snappy v1.0.0 // indirect
 	github.com/joho/godotenv v1.5.1
